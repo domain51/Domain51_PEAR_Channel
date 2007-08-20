@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Domain51_PEAR_Channel" basedir="." default="make">
+    <taskdef classname="phing.tasks.ext.d51PearPkg2Task" name="d51pearpkg2" />
+    
+    <property name="version" value="0.1" />
+    <property name="package_name" value="Domain51_PEAR_Channel" />
+    
+    <target name="clean">
+        <delete dir="./build/package" />
+        <delete dir="./build/export" />
+        <delete file="./${package_name}-${version}.tgz" />
+        
+        <mkdir dir="./build/package" />
+    </target>
+        
+    <target name="export" depends="clean">
+        <echo msg="Exporting SVN files" />
+        <exec command="svn export ./src ./build/export" />
+        
+        <copy todir="./build/package">
+            <filterchain>
+                <replacetokens begintoken="@@" endtoken="@@">
+                    <token key="VERSION" value="${version}" />
+                </replacetokens>
+            </filterchain>
+            <fileset dir="./build/export">
+                <include name="Domain51*/**" />
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="build" depends="export">
+        <d51pearpkg2 dir="./build/package" baseinstalldir="/">
+            <name>${package_name}</name>
+            <summary>Provides basic interaction with Chiara_PEAR_Server data</summary>
+            <channel>pear.domain51.com</channel>
+            <description indentions_to_remove="16">
+                <!--        Don't exceed this width         -->
+                This package provides basic interaction with
+                Greg Beaver's Chiara_PEAR_Server package,
+                allowing you to access each of the tables via
+                a traditional Model object.
+            </description>
+            
+            <lead user="tswicegood" name="Travis Swicegood" email="developer@domain51.com" />
+            <license>LGPL</license>
+            
+            <version release="${version}" api="1.0" />
+            <stability release="alpha" api="alpha" />
+            
+            <changelog version="0.1" date="2007-08-19">
+                <!--        Don't exceed this width         -->
+                This is the initial alpha release of this
+                package.
+            </changelog>
+            
+            <dependencies>
+                <package name="Chiara_PEAR_Server"
+                         channel="pear.chiaraquartet.net"
+                         recommended_version="0.18.7" />
+            </dependencies>
+            
+        </d51pearpkg2>
+    </target>
+    
+    <target name="make" depends="build">
+        <echo msg="Creating PEAR archive file for ${package_name}" />
+        <mkdir dir="./build/package/${package_name}-${version}" />
+        <copy todir="./build/package/${package_name}-${version}">
+            <fileset dir="./build/package">
+                <include name="Domain51/**/**" />
+            </fileset>
+        </copy>
+        <delete dir="./build/package/Domain51" />
+        <tar compression="gzip" destfile="${package_name}-${version}.tgz" basedir="./build/package" />
+    </target>
+    
+    <target name="docs" depends="export">
+        <echo msg="Creating documentation" />
+        <phpdoc title="${package_name} Docs" 
+            destdir="./apidocs"
+            sourcecode="./build"
+            output="HTML:frames:DOM/earthli"
+        >
+            <fileset dir="./build/export">
+                <include name="**" />
+            </fileset>
+        </phpdoc>
+    </target>
+</project>
