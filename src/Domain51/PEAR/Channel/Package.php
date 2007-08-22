@@ -31,7 +31,8 @@ class Domain51_PEAR_Channel_Package extends Domain51_PEAR_Channel_AbstractDBMode
         
         switch ($key) {
             case 'releases' :
-                return new Domain51_PEAR_Channel_ReleaseList($this->_config, $this);
+                $this->_data['releases'] = new Domain51_PEAR_Channel_ReleaseList($this->_config, $this);
+                return $this->_data['releases'];
             
             case 'has_children' :
                 $statement = $this->_config->pdo->prepare("SELECT COUNT(*) FROM packages WHERE parent = :package");
