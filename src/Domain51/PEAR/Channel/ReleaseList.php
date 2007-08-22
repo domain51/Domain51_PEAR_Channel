@@ -19,6 +19,11 @@ class Domain51_PEAR_Channel_ReleaseList extends Domain51_PEAR_Channel_AbstractIt
         $this->_config = $config;
     }
     
+    public function reverse()
+    {
+        $this->_data = array_reverse($this->_data);
+    }
+    
     public function filter($type)
     {
         $args = func_get_args();
