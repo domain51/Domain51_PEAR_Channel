@@ -50,7 +50,9 @@
             
             <changelog version="0.1.1" date="2007-08-22">
                 <!--        Don't exceed this width         -->
-                Add in ReleaseList::reverse()
+                * Add in ReleaseList::reverse()
+                * Make sure that the same ReleaseList is always
+                returned by Package::$releases.
             </changelog>
             
             <changelog version="0.1" date="2007-08-19">
